@@ -219,6 +219,10 @@ async function apiCall(url, sheetId, action) {
   return await r.json();
 }
 
+// ── Fixed Google Sheet connection (built into the app, so users never enter it) ──
+const FIXED_URL = 'https://script.google.com/macros/s/AKfycbyFyHTUjObxwRr_sUVTlUkA7K65IZOpmSPGDZs9wrTxWscUoSkwI8xcTun9TP-mOuYD/exec';
+const FIXED_SID = '1-qGNW3dlBy8KWEoJYYxr9jcwJtjUnMA42Je5ak0M0PE';
+
 // ── Local Storage helpers ──
 const LS = {
   get: function (k) {
@@ -1518,11 +1522,11 @@ function Confirm(_ref7) {
 function App() {
   var _confirmCust$customer;
   // ── Connection State ──
-  const _useState = useState(() => LS.get('url', '')),
+  const _useState = useState(() => FIXED_URL || LS.get('url', '')),
     _useState2 = _slicedToArray(_useState, 2),
     url = _useState2[0],
     setUrl = _useState2[1];
-  const _useState3 = useState(() => LS.get('sid', '')),
+  const _useState3 = useState(() => FIXED_SID || LS.get('sid', '')),
     _useState4 = _slicedToArray(_useState3, 2),
     sid = _useState4[0],
     setSid = _useState4[1];
@@ -8225,8 +8229,17 @@ function SettingsPage(_ref34) {
     }
   }, /*#__PURE__*/React.createElement("label", {
     style: S.lbl
-  }, "Web App URL"), /*#__PURE__*/React.createElement("input", {
-    style: S.inp,
+  }, "Web App URL ", FIXED_URL && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 400,
+      color: '#94a3b8'
+    }
+  }, "(built into the app)")), /*#__PURE__*/React.createElement("input", {
+    style: {
+      ...S.inp,
+      background: FIXED_URL ? '#f1f5f9' : '#fff'
+    },
+    readOnly: !!FIXED_URL,
     value: url,
     onChange: e => setUrl(e.target.value)
   })), /*#__PURE__*/React.createElement("div", {
@@ -8235,8 +8248,17 @@ function SettingsPage(_ref34) {
     }
   }, /*#__PURE__*/React.createElement("label", {
     style: S.lbl
-  }, "Sheet ID"), /*#__PURE__*/React.createElement("input", {
-    style: S.inp,
+  }, "Sheet ID ", FIXED_SID && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 400,
+      color: '#94a3b8'
+    }
+  }, "(built into the app)")), /*#__PURE__*/React.createElement("input", {
+    style: {
+      ...S.inp,
+      background: FIXED_SID ? '#f1f5f9' : '#fff'
+    },
+    readOnly: !!FIXED_SID,
     value: sid,
     onChange: e => setSid(e.target.value)
   })), /*#__PURE__*/React.createElement("div", {

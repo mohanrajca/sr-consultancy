@@ -72,6 +72,10 @@ async function apiCall(url,sheetId,action,data={}){
   return await r.json();
 }
 
+// ── Fixed Google Sheet connection (built into the app, so users never enter it) ──
+const FIXED_URL='https://script.google.com/macros/s/AKfycbyFyHTUjObxwRr_sUVTlUkA7K65IZOpmSPGDZs9wrTxWscUoSkwI8xcTun9TP-mOuYD/exec';
+const FIXED_SID='1-qGNW3dlBy8KWEoJYYxr9jcwJtjUnMA42Je5ak0M0PE';
+
 // ── Local Storage helpers ──
 const LS={
   get:(k,def=null)=>{try{const v=localStorage.getItem('gip_'+k);return v?JSON.parse(v):def}catch{return def}},
@@ -496,8 +500,8 @@ function Confirm({open,onClose,onOk,title,msg,okText="Yes",noText="No"}){
 // ══════════════════════════════════════════════════════════════
 function App(){
   // ── Connection State ──
-  const [url,setUrl]=useState(()=>LS.get('url',''));
-  const [sid,setSid]=useState(()=>LS.get('sid',''));
+  const [url,setUrl]=useState(()=>FIXED_URL||LS.get('url',''));
+  const [sid,setSid]=useState(()=>FIXED_SID||LS.get('sid',''));
   const [conn,setConn]=useState(false);
   const [syncing,setSyncing]=useState(false);
   const [lastSync,setLastSync]=useState(null);
@@ -2057,8 +2061,8 @@ function SettingsPage({url,setUrl,sid,setSid,conn,syncing,connect,fullSync,backu
     <h2 style={{fontSize:22,fontWeight:800,margin:'0 0 20px'}}>Settings</h2>
     <div style={{...S.card,padding:24,marginBottom:20}}>
       <h3 style={{fontSize:16,fontWeight:700,margin:'0 0 16px'}}>🔗 Google Sheet Connection</h3>
-      <div style={{marginBottom:14}}><label style={S.lbl}>Web App URL</label><input style={S.inp} value={url} onChange={e=>setUrl(e.target.value)}/></div>
-      <div style={{marginBottom:14}}><label style={S.lbl}>Sheet ID</label><input style={S.inp} value={sid} onChange={e=>setSid(e.target.value)}/></div>
+      <div style={{marginBottom:14}}><label style={S.lbl}>Web App URL {FIXED_URL&&<span style={{fontWeight:400,color:'#94a3b8'}}>(built into the app)</span>}</label><input style={{...S.inp,background:FIXED_URL?'#f1f5f9':'#fff'}} readOnly={!!FIXED_URL} value={url} onChange={e=>setUrl(e.target.value)}/></div>
+      <div style={{marginBottom:14}}><label style={S.lbl}>Sheet ID {FIXED_SID&&<span style={{fontWeight:400,color:'#94a3b8'}}>(built into the app)</span>}</label><input style={{...S.inp,background:FIXED_SID?'#f1f5f9':'#fff'}} readOnly={!!FIXED_SID} value={sid} onChange={e=>setSid(e.target.value)}/></div>
       <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
         <button style={S.btnP} onClick={connect} disabled={syncing}><Ic name="link" size={16}/> {syncing?'...':'Reconnect'}</button>
         {conn&&<button style={S.btnS} onClick={fullSync} disabled={syncing}><Ic name="sync" size={16}/> Pull from Sheet</button>}
